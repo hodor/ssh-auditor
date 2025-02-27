@@ -11,6 +11,7 @@ import (
 
 var ports []int
 var exclude []string
+var timeoutMs int
 
 var discoverCmd = &cobra.Command{
 	Use:     "discover",
@@ -22,11 +23,13 @@ var discoverCmd = &cobra.Command{
 			cmd.Usage()
 			return
 		}
+		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
 			Include:     args,
 			Exclude:     exclude,
 			Ports:       ports,
+			Timeout: timeoutDuration,
 		}
 		auditor := sshauditor.New(store)
 		err := auditor.Discover(scanConfig)
@@ -43,10 +46,12 @@ var discoverFromFileCmd = &cobra.Command{
 	Short:   "discover new hosts using a list of hosts from stdin",
 	Run: func(cmd *cobra.Command, args []string) {
 		scanner := bufio.NewScanner(os.Stdin)
+		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
 			Include:     []string{},
 			Ports:       ports,
+			Timeout: timeoutDuration,
 		}
 		for scanner.Scan() {
 			host := scanner.Text()
@@ -64,8 +69,10 @@ var discoverFromFileCmd = &cobra.Command{
 func init() {
 	discoverCmd.Flags().IntSliceVarP(&ports, "ports", "p", []int{22}, "ports to check during initial discovery")
 	discoverCmd.Flags().StringSliceVarP(&exclude, "exclude", "x", []string{}, "subnets to exclude from discovery")
+	discoverCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 
 	discoverFromFileCmd.Flags().IntSliceVarP(&ports, "ports", "p", []int{22}, "ports to check during initial discovery")
+	discoverFromFileCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	RootCmd.AddCommand(discoverCmd)
 	discoverCmd.AddCommand(discoverFromFileCmd)
 }
