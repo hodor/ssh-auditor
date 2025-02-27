@@ -19,7 +19,7 @@ var scanCmd = &cobra.Command{
 		
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
-			Timeout: timeoutDuration
+			Timeout: timeoutDuration,
 		}
 		auditor := sshauditor.New(store)
 		_, err := auditor.Scan(scanConfig)
