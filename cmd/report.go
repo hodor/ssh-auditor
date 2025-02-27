@@ -7,7 +7,7 @@ import (
 	text_template "text/template"
 
 	log "github.com/inconshreveable/log15"
-	"github.com/ncsa/ssh-auditor/sshauditor"
+	"github.com/hodor/ssh-auditor/sshauditor"
 
 	"github.com/spf13/cobra"
 )
