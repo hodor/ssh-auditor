@@ -30,6 +30,6 @@ var rescanCmd = &cobra.Command{
 }
 
 func init() {
-	scanCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
+	rescanCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	RootCmd.AddCommand(rescanCmd)
 }
