@@ -2,19 +2,19 @@ package cmd
 
 import (
 	"os"
-
+	"time"
 	log "github.com/inconshreveable/log15"
 	"github.com/ncsa/ssh-auditor/sshauditor"
 	"github.com/spf13/cobra"
 )
 
-var timeoutMs int
+var timeoutRescanMs int
 
 var rescanCmd = &cobra.Command{
 	Use:   "rescan",
 	Short: "Rescan hosts with credentials that have previously worked",
 	Run: func(cmd *cobra.Command, args []string) {
-		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
+		timeoutDuration := time.Duration(timeoutRescanMs) * time.Millisecond
 		
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
@@ -30,6 +30,6 @@ var rescanCmd = &cobra.Command{
 }
 
 func init() {
-	rescanCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
+	rescanCmd.Flags().IntVar(&timeoutRescanMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	RootCmd.AddCommand(rescanCmd)
 }
