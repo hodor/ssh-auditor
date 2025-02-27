@@ -14,6 +14,8 @@ var logcheckCmd = &cobra.Command{
 	Aliases: []string{"lc"},
 }
 
+var timeoutMs int
+
 var logcheckRunCmd = &cobra.Command{
 	Use:   "run",
 	Short: "trigger failed ssh authentication attempts",
@@ -21,8 +23,10 @@ var logcheckRunCmd = &cobra.Command{
 		local servers are properly shipping logs to a central collector`,
 	Run: func(cmd *cobra.Command, args []string) {
 		auditor := sshauditor.New(store)
+		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
+			Timeout: timeoutDuration,
 		}
 		err := auditor.Logcheck(scanConfig)
 		if err != nil {
@@ -63,5 +67,6 @@ func init() {
 	logcheckCmd.AddCommand(logcheckRunCmd)
 
 	logcheckReportCmd.Flags().StringVar(&splunkHost, "splunk", "", "base url to splunk API (https://host:port)")
+	logcheckReportCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	logcheckCmd.AddCommand(logcheckReportCmd)
 }
