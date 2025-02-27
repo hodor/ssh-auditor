@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"os"
-
+	"time"
 	log "github.com/inconshreveable/log15"
 	"github.com/ncsa/ssh-auditor/sshauditor"
 	"github.com/spf13/cobra"
@@ -14,7 +14,7 @@ var logcheckCmd = &cobra.Command{
 	Aliases: []string{"lc"},
 }
 
-var timeoutMs int
+var timeoutLogCheckMs int
 
 var logcheckRunCmd = &cobra.Command{
 	Use:   "run",
@@ -23,7 +23,7 @@ var logcheckRunCmd = &cobra.Command{
 		local servers are properly shipping logs to a central collector`,
 	Run: func(cmd *cobra.Command, args []string) {
 		auditor := sshauditor.New(store)
-		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
+		timeoutDuration := time.Duration(timeoutLogCheckMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
 			Timeout: timeoutDuration,
@@ -67,6 +67,6 @@ func init() {
 	logcheckCmd.AddCommand(logcheckRunCmd)
 
 	logcheckReportCmd.Flags().StringVar(&splunkHost, "splunk", "", "base url to splunk API (https://host:port)")
-	logcheckReportCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
+	logcheckReportCmd.Flags().IntVar(&timeoutLogCheckMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	logcheckCmd.AddCommand(logcheckReportCmd)
 }
