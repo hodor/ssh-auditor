@@ -17,6 +17,7 @@ type ScanConfiguration struct {
 	Exclude     []string
 	Ports       []int
 	Concurrency int
+	Timeout     time.Duration
 }
 type AuditResult struct {
 	totalCount int
