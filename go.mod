@@ -1,4 +1,4 @@
-module github.com/ncsa/ssh-auditor
+module github.com/hodor/ssh-auditor
 
 go 1.13
 
