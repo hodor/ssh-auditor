@@ -4,7 +4,7 @@ import (
 	"os"
 
 	log "github.com/inconshreveable/log15"
-	"github.com/ncsa/ssh-auditor/cmd"
+	"github.com/hodor/ssh-auditor/cmd"
 )
 
 func main() {
