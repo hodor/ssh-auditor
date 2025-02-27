@@ -3,7 +3,7 @@ package cmd
 import (
 	"bufio"
 	"os"
-
+	"time"
 	log "github.com/inconshreveable/log15"
 	"github.com/ncsa/ssh-auditor/sshauditor"
 	"github.com/spf13/cobra"
@@ -11,7 +11,7 @@ import (
 
 var ports []int
 var exclude []string
-var timeoutMs int
+var timeoutDiscoverMs int
 
 var discoverCmd = &cobra.Command{
 	Use:     "discover",
@@ -23,7 +23,7 @@ var discoverCmd = &cobra.Command{
 			cmd.Usage()
 			return
 		}
-		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
+		timeoutDuration := time.Duration(timeoutDiscoverMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
 			Include:     args,
@@ -46,7 +46,7 @@ var discoverFromFileCmd = &cobra.Command{
 	Short:   "discover new hosts using a list of hosts from stdin",
 	Run: func(cmd *cobra.Command, args []string) {
 		scanner := bufio.NewScanner(os.Stdin)
-		timeoutDuration := time.Duration(timeoutMs) * time.Millisecond
+		timeoutDuration := time.Duration(timeoutDiscoverMs) * time.Millisecond
 		scanConfig := sshauditor.ScanConfiguration{
 			Concurrency: concurrency,
 			Include:     []string{},
@@ -69,10 +69,10 @@ var discoverFromFileCmd = &cobra.Command{
 func init() {
 	discoverCmd.Flags().IntSliceVarP(&ports, "ports", "p", []int{22}, "ports to check during initial discovery")
 	discoverCmd.Flags().StringSliceVarP(&exclude, "exclude", "x", []string{}, "subnets to exclude from discovery")
-	discoverCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
+	discoverCmd.Flags().IntVar(&timeoutDiscoverMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 
 	discoverFromFileCmd.Flags().IntSliceVarP(&ports, "ports", "p", []int{22}, "ports to check during initial discovery")
-	discoverFromFileCmd.Flags().IntVar(&timeoutMs, "timeout", 4000, "SSH connection timeout in milliseconds")
+	discoverFromFileCmd.Flags().IntVar(&timeoutDiscoverMs, "timeout", 4000, "SSH connection timeout in milliseconds")
 	RootCmd.AddCommand(discoverCmd)
 	discoverCmd.AddCommand(discoverFromFileCmd)
 }
