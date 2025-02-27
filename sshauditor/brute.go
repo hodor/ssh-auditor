@@ -1,6 +1,9 @@
 package sshauditor
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type ScanRequest struct {
 	hostport    string
@@ -14,7 +17,7 @@ type BruteForceResult struct {
 	result   string
 }
 
-func bruteworker(jobs <-chan ScanRequest, results chan<- BruteForceResult) {
+func bruteworker(jobs <-chan ScanRequest, results chan<- BruteForceResult, timeout time.Duration) {
 	for sr := range jobs {
 		failures := 0
 		for _, cred := range sr.credentials {
@@ -23,7 +26,7 @@ func bruteworker(jobs <-chan ScanRequest, results chan<- BruteForceResult) {
 			if failures > 5 {
 				continue
 			}
-			result, err := SSHAuthAttempt(sr.hostport, cred.User, cred.Password)
+			result, err := SSHAuthAttempt(sr.hostport, cred.User, cred.Password, timeout)
 			res := BruteForceResult{
 				hostport: sr.hostport,
 				cred:     cred,
@@ -38,7 +41,7 @@ func bruteworker(jobs <-chan ScanRequest, results chan<- BruteForceResult) {
 	}
 }
 
-func bruteForcer(numWorkers int, requests []ScanRequest) chan BruteForceResult {
+func bruteForcer(numWorkers int, requests []ScanRequest, timeout time.Duration) chan BruteForceResult {
 	var wg sync.WaitGroup
 
 	requestChan := make(chan ScanRequest, numWorkers)
@@ -53,7 +56,7 @@ func bruteForcer(numWorkers int, requests []ScanRequest) chan BruteForceResult {
 	for w := 0; w <= numWorkers; w++ {
 		wg.Add(1)
 		go func() {
-			bruteworker(requestChan, results)
+			bruteworker(requestChan, results, timeout)
 			wg.Done()
 		}()
 	}
