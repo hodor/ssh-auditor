@@ -155,7 +155,7 @@ func genAuthMethod(password string) ([]ssh.AuthMethod, error) {
 	}, nil
 }
 
-func SSHAuthAttempt(hostport, user, password string) (string, error) {
+func SSHAuthAttempt(hostport, user, password string, timeout time.Duration) (string, error) {
 	authMethods, err := genAuthMethod(password)
 	if err != nil {
 		return "", err
@@ -164,7 +164,7 @@ func SSHAuthAttempt(hostport, user, password string) (string, error) {
 		User:            user,
 		Auth:            authMethods,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         4 * time.Second,
+		Timeout:         timeout,
 		ClientVersion:   "SSH-2.0-Go-ssh-auditor",
 	}
 	client, err := DialWithDeadline("tcp", hostport, config)
