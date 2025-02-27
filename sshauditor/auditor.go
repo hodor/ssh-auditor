@@ -199,7 +199,7 @@ func (a *SSHAuditor) brute(scantype string, cfg ScanConfiguration) (AuditResult,
 	if err != nil {
 		return res, errors.Wrap(err, "Error getting scan queue")
 	}
-	bruteResults := bruteForcer(cfg.Concurrency, sc)
+	bruteResults := bruteForcer(cfg.Concurrency, sc, cfg.Timeout)
 
 	bruteResultsWrapped := make(chan interface{})
 	go func() {
@@ -312,7 +312,7 @@ func (a *SSHAuditor) Logcheck(cfg ScanConfiguration) error {
 		return err
 	}
 
-	bruteResults := bruteForcer(cfg.Concurrency, sc)
+	bruteResults := bruteForcer(cfg.Concurrency, sc, cfg.Timeout)
 
 	for br := range bruteResults {
 		l := log.New("host", br.hostport, "user", br.cred.User)
