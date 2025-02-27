@@ -1,7 +1,7 @@
 project_name: ssh-auditor
 release:
   github:
-    owner: ncsa
+    owner: hodor
     name: ssh-auditor
   name_template: '{{.Tag}}'
 builds:
@@ -40,7 +40,7 @@ nfpms:
   license: University of Illinois/NCSA Open Source License (NCSA)
   file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
   bindir: /usr/bin
-  homepage: https://github.com/ncsa/ssh-auditor
+  homepage: https://github.com/hodor/ssh-auditor
   maintainer: Justin Azoff <jazoff@illinois.edu>
   formats:
     - deb
